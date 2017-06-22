@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mstf.dao.Check_jobMapper" >
+  <resultMap id="BaseResultMap" type="com.mstf.entity.Check_job" >
+    <id column="check_id" property="checkId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="check_type" property="checkType" jdbcType="VARCHAR" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="checks" property="checks" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+  </resultMap>
+  
+    <resultMap id="checkResultMap" type="com.mstf.entity.Check_job" >
+    <id column="check_id" property="checkId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="check_type" property="checkType" jdbcType="VARCHAR" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="checks" property="checks" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <association property="user" resultMap="UserResultMap"></association>
+  </resultMap>
+  <resultMap id="UserResultMap" type="com.mstf.entity.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="authority" property="authority" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+  </resultMap>
+  
+	<select id="See_Check_job" resultMap="BaseResultMap">
+		select distinct check_type, checks/count checks from check_job;
+	</select>
+	
+	<select id="See_Check_job_All" resultMap="checkResultMap">
+		select c.check_id, c.number, u.name name, c.check_type, c.count, c.checks, c.time 
+		from check_job c, user u 
+		where c.number = u.number;
+	</select>  
+  
+  <update id="Updata_Check_job_ByCheck_Id" parameterType="com.mstf.entity.Check_job">
+  	update check_job
+    set check_type=#{check_type,jdbcType=VARCHAR}, count=#{count,jdbcType=INTEGER},
+    checks=#{checks,jdbcType=INTEGER}, time=#{time,jdbcType=VARCHAR}
+    where check_id=#{check_id,jdbcType=INTEGER};
+  </update>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    check_id, number, check_type, count, checks, time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.mstf.entity.Check_jobExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from check_job
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from check_job
+    where check_id = #{checkId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from check_job
+    where check_id = #{checkId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.mstf.entity.Check_jobExample" >
+    delete from check_job
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.mstf.entity.Check_job" >
+    insert into check_job (check_id, number, check_type, 
+      count, checks, time)
+    values (#{checkId,jdbcType=INTEGER}, #{number,jdbcType=VARCHAR}, #{checkType,jdbcType=VARCHAR}, 
+      #{count,jdbcType=INTEGER}, #{checks,jdbcType=INTEGER}, #{time,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mstf.entity.Check_job" >
+    insert into check_job
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="checkId != null" >
+        check_id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="checkType != null" >
+        check_type,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="checks != null" >
+        checks,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="checkId != null" >
+        #{checkId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="checkType != null" >
+        #{checkType,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="checks != null" >
+        #{checks,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.mstf.entity.Check_jobExample" resultType="java.lang.Integer" >
+    select count(*) from check_job
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update check_job
+    <set >
+      <if test="record.checkId != null" >
+        check_id = #{record.checkId,jdbcType=INTEGER},
+      </if>
+      <if test="record.number != null" >
+        number = #{record.number,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkType != null" >
+        check_type = #{record.checkType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.count != null" >
+        count = #{record.count,jdbcType=INTEGER},
+      </if>
+      <if test="record.check != null" >
+        check = #{record.check,jdbcType=INTEGER},
+      </if>
+      <if test="record.time != null" >
+        time = #{record.time,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update check_job
+    set check_id = #{record.checkId,jdbcType=INTEGER},
+      number = #{record.number,jdbcType=VARCHAR},
+      check_type = #{record.checkType,jdbcType=VARCHAR},
+      count = #{record.count,jdbcType=INTEGER},
+      checks = #{record.checks,jdbcType=INTEGER},
+      time = #{record.time,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mstf.entity.Check_job" >
+    update check_job
+    <set >
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="checkType != null" >
+        check_type = #{checkType,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="checks != null" >
+        checks = #{check,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where check_id = #{checkId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mstf.entity.Check_job" >
+    update check_job
+    set number = #{number,jdbcType=VARCHAR},
+      check_type = #{checkType,jdbcType=VARCHAR},
+      count = #{count,jdbcType=INTEGER},
+      checks = #{checks,jdbcType=INTEGER},
+      time = #{time,jdbcType=VARCHAR}
+    where check_id = #{checkId,jdbcType=INTEGER}
+  </update>
+</mapper>

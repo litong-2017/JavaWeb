@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mstf.dao.PrizeMapper" >
+  <resultMap id="BaseResultMap" type="com.mstf.entity.Prize" >
+    <id column="prize_id" property="prizeId" jdbcType="INTEGER" />
+    <result column="prize_type" property="prizeType" jdbcType="VARCHAR" />
+    <result column="prizes" property="prizes" jdbcType="INTEGER" />
+    <result column="prize_time" property="prizeTime" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="See_Prize" resultMap="BaseResultMap">
+  	SELECT * FROM prize;
+  </select>
+  
+  <update id="Updata_Prizes_ByPrize_Type" parameterType="com.mstf.entity.Prize">
+  	update prize
+    set prizes=#{prizes,jdbcType=INTEGER}, prize_time=#{time,jdbcType=VARCHAR}
+    where prize_type=#{prize_Type,jdbcType=VARCHAR};
+  </update>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    prize_id, prize_type, prizes, prize_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.mstf.entity.PrizeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from prize
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from prize
+    where prize_id = #{prizeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from prize
+    where prize_id = #{prizeId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.mstf.entity.PrizeExample" >
+    delete from prize
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.mstf.entity.Prize" >
+    insert into prize (prize_id, prize_type, prizes, 
+      prize_time)
+    values (#{prizeId,jdbcType=INTEGER}, #{prizeType,jdbcType=VARCHAR}, #{prizes,jdbcType=INTEGER}, 
+      #{prizeTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mstf.entity.Prize" >
+    insert into prize
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="prizeId != null" >
+        prize_id,
+      </if>
+      <if test="prizeType != null" >
+        prize_type,
+      </if>
+      <if test="prizes != null" >
+        prizes,
+      </if>
+      <if test="prizeTime != null" >
+        prize_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="prizeId != null" >
+        #{prizeId,jdbcType=INTEGER},
+      </if>
+      <if test="prizeType != null" >
+        #{prizeType,jdbcType=VARCHAR},
+      </if>
+      <if test="prizes != null" >
+        #{prizes,jdbcType=INTEGER},
+      </if>
+      <if test="prizeTime != null" >
+        #{prizeTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.mstf.entity.PrizeExample" resultType="java.lang.Integer" >
+    select count(*) from prize
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update prize
+    <set >
+      <if test="record.prizeId != null" >
+        prize_id = #{record.prizeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.prizeType != null" >
+        prize_type = #{record.prizeType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prizes != null" >
+        prizes = #{record.prizes,jdbcType=INTEGER},
+      </if>
+      <if test="record.prizeTime != null" >
+        prize_time = #{record.prizeTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update prize
+    set prize_id = #{record.prizeId,jdbcType=INTEGER},
+      prize_type = #{record.prizeType,jdbcType=VARCHAR},
+      prizes = #{record.prizes,jdbcType=INTEGER},
+      prize_time = #{record.prizeTime,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mstf.entity.Prize" >
+    update prize
+    <set >
+      <if test="prizeType != null" >
+        prize_type = #{prizeType,jdbcType=VARCHAR},
+      </if>
+      <if test="prizes != null" >
+        prizes = #{prizes,jdbcType=INTEGER},
+      </if>
+      <if test="prizeTime != null" >
+        prize_time = #{prizeTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where prize_id = #{prizeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mstf.entity.Prize" >
+    update prize
+    set prize_type = #{prizeType,jdbcType=VARCHAR},
+      prizes = #{prizes,jdbcType=INTEGER},
+      prize_time = #{prizeTime,jdbcType=VARCHAR}
+    where prize_id = #{prizeId,jdbcType=INTEGER}
+  </update>
+</mapper>

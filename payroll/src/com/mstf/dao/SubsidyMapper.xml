@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mstf.dao.SubsidyMapper" >
+  <resultMap id="BaseResultMap" type="com.mstf.entity.Subsidy" >
+    <id column="subsidy_id" property="subsidyId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="subsidy_type" property="subsidyType" jdbcType="VARCHAR" />
+    <result column="subsidys" property="subsidys" jdbcType="INTEGER" />
+    <result column="subsidy_time" property="subsidyTime" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="SubsidyCall" type="com.mstf.entity.Subsidy" >
+    <id column="subsidy_id" property="subsidyId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="subsidy_type" property="subsidyType" jdbcType="VARCHAR" />
+    <result column="subsidys" property="subsidys" jdbcType="INTEGER" />
+    <result column="subsidy_time" property="subsidyTime" jdbcType="VARCHAR" />
+    <association property="user" resultMap="BaseResultUser"></association>
+  </resultMap>
+  
+  <resultMap id="BaseResultUser" type="com.mstf.entity.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="authority" property="authority" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <update id="Updata_Subsidy_BySubsidy_Id" parameterType="com.mstf.entity.Subsidy">
+  	update subsidy
+    set subsidy_type=#{subsidy_type,jdbcType=VARCHAR}, subsidys=#{subsidys,jdbcType=INTEGER}, subsidy_time=#{time,jdbcType=VARCHAR}
+    where subsidy_id=#{subsidy_id,jdbcType=INTEGER};
+  </update>
+  
+  <select id="See_Subsidy" resultMap="SubsidyCall">
+  	SELECT s.subsidy_id,s.number,s.subsidy_type,s.subsidys,s.subsidy_time,u.name 
+	FROM subsidy s,user u WHERE s.number=u.number
+  </select>
+  
+  <select id="Search_Subsidy_ByName" resultMap="SubsidyCall">
+  	SELECT s.subsidy_id,s.number,s.subsidy_type,s.subsidys,s.subsidy_time,u.name 
+	FROM subsidy s,user u WHERE s.number=u.number 
+	<if test="name != null">
+		AND u.name = #{name,jdbcType=VARCHAR}
+	</if>
+  </select>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    subsidy_id, number, subsidy_type, subsidys, subsidy_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.mstf.entity.SubsidyExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from subsidy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from subsidy
+    where subsidy_id = #{subsidyId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from subsidy
+    where subsidy_id = #{subsidyId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.mstf.entity.SubsidyExample" >
+    delete from subsidy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.mstf.entity.Subsidy" >
+    insert into subsidy (subsidy_id, number, subsidy_type, 
+      subsidys, subsidy_time)
+    values (#{subsidyId,jdbcType=INTEGER}, #{number,jdbcType=VARCHAR}, #{subsidyType,jdbcType=VARCHAR}, 
+      #{subsidys,jdbcType=INTEGER}, #{subsidyTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mstf.entity.Subsidy" >
+    insert into subsidy
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="subsidyId != null" >
+        subsidy_id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="subsidyType != null" >
+        subsidy_type,
+      </if>
+      <if test="subsidys != null" >
+        subsidys,
+      </if>
+      <if test="subsidyTime != null" >
+        subsidy_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="subsidyId != null" >
+        #{subsidyId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="subsidyType != null" >
+        #{subsidyType,jdbcType=VARCHAR},
+      </if>
+      <if test="subsidys != null" >
+        #{subsidys,jdbcType=INTEGER},
+      </if>
+      <if test="subsidyTime != null" >
+        #{subsidyTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.mstf.entity.SubsidyExample" resultType="java.lang.Integer" >
+    select count(*) from subsidy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update subsidy
+    <set >
+      <if test="record.subsidyId != null" >
+        subsidy_id = #{record.subsidyId,jdbcType=INTEGER},
+      </if>
+      <if test="record.number != null" >
+        number = #{record.number,jdbcType=VARCHAR},
+      </if>
+      <if test="record.subsidyType != null" >
+        subsidy_type = #{record.subsidyType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.subsidys != null" >
+        subsidys = #{record.subsidys,jdbcType=INTEGER},
+      </if>
+      <if test="record.subsidyTime != null" >
+        subsidy_time = #{record.subsidyTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update subsidy
+    set subsidy_id = #{record.subsidyId,jdbcType=INTEGER},
+      number = #{record.number,jdbcType=VARCHAR},
+      subsidy_type = #{record.subsidyType,jdbcType=VARCHAR},
+      subsidys = #{record.subsidys,jdbcType=INTEGER},
+      subsidy_time = #{record.subsidyTime,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mstf.entity.Subsidy" >
+    update subsidy
+    <set >
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="subsidyType != null" >
+        subsidy_type = #{subsidyType,jdbcType=VARCHAR},
+      </if>
+      <if test="subsidys != null" >
+        subsidys = #{subsidys,jdbcType=INTEGER},
+      </if>
+      <if test="subsidyTime != null" >
+        subsidy_time = #{subsidyTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where subsidy_id = #{subsidyId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mstf.entity.Subsidy" >
+    update subsidy
+    set number = #{number,jdbcType=VARCHAR},
+      subsidy_type = #{subsidyType,jdbcType=VARCHAR},
+      subsidys = #{subsidys,jdbcType=INTEGER},
+      subsidy_time = #{subsidyTime,jdbcType=VARCHAR}
+    where subsidy_id = #{subsidyId,jdbcType=INTEGER}
+  </update>
+</mapper>

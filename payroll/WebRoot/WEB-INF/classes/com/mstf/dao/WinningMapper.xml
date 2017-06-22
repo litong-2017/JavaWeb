@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mstf.dao.WinningMapper" >
+  <resultMap id="BaseResultMap" type="com.mstf.entity.Winning" >
+    <id column="winning_id" property="winningId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="prize_type" property="prizeType" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="winningResultmap" type="com.mstf.entity.Winning" >
+    <id column="winning_id" property="winningId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="prize_type" property="prizeType" jdbcType="VARCHAR" />
+    <association property="prize" resultMap="prizeResultmap"></association>
+    <collection property="user" resultMap="userResultmap"></collection>
+  </resultMap>
+  
+   <resultMap id="prizeResultmap" type="com.mstf.entity.Prize" >
+    <id column="prize_id" property="prizeId" jdbcType="INTEGER" />
+    <result column="prize_type" property="prizeType" jdbcType="VARCHAR" />
+    <result column="prizes" property="prizes" jdbcType="INTEGER" />
+    <result column="prize_time" property="prizeTime" jdbcType="DATE" />
+  </resultMap>
+  
+    <resultMap id="userResultmap" type="com.mstf.entity.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="authority" property="authority" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="WinningCall" type="com.mstf.entity.Winning" >
+    <id column="winning_id" property="winningId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="prize_type" property="prizeType" jdbcType="VARCHAR" />
+    <association property="prize" resultMap="BaseResultPrize"></association>
+    <collection property="user" resultMap="BaseResultUser"></collection>
+  </resultMap>
+  <resultMap id="BaseResultPrize" type="com.mstf.entity.Prize" >
+    <id column="prize_id" property="prizeId" jdbcType="INTEGER" />
+    <result column="prize_type" property="prizeType" jdbcType="VARCHAR" />
+    <result column="prizes" property="prizes" jdbcType="INTEGER" />
+    <result column="prize_time" property="prizeTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="BaseResultUser" type="com.mstf.entity.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="authority" property="authority" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="See_Call_Winning" resultMap="WinningCall">
+  	SELECT w.winning_id, w.number,u.name,w.prize_type,p.prizes,p.prize_time
+	FROM winning w,user u,prize p
+	WHERE w.number=u.number AND w.prize_type=p.prize_type
+  </select>
+  
+   <select id="See_Winning" resultMap="BaseResultMap">
+  	SELECT * FROM winning;
+  </select>
+  
+  <select id="See_Winning_All" resultMap="winningResultmap">
+	SELECT w.number, u.name, w.prize_type, p.prizes, p.prize_time
+		FROM winning w, user u, prize p
+		WHERE w.number = u.number AND w.prize_type = p.prize_type 
+		GROUP BY w.prize_type
+  </select>
+
+	<update id="Updata_Winning_ByWinningId" parameterType="com.mstf.entity.Winning">
+		update winning
+		set number=#{number,jdbcType=VARCHAR}, prize_type=#{prize_type,jdbcType=VARCHAR}
+		where winning_id=#{winning_id,jdbcType=INTEGER};
+	</update>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    winning_id, number, prize_type
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.mstf.entity.WinningExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from winning
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from winning
+    where winning_id = #{winningId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from winning
+    where winning_id = #{winningId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.mstf.entity.WinningExample" >
+    delete from winning
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.mstf.entity.Winning" >
+    insert into winning (winning_id, number, prize_type
+      )
+    values (#{winningId,jdbcType=INTEGER}, #{number,jdbcType=VARCHAR}, #{prizeType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.mstf.entity.Winning" >
+    insert into winning
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="winningId != null" >
+        winning_id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="prizeType != null" >
+        prize_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="winningId != null" >
+        #{winningId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeType != null" >
+        #{prizeType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.mstf.entity.WinningExample" resultType="java.lang.Integer" >
+    select count(*) from winning
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update winning
+    <set >
+      <if test="record.winningId != null" >
+        winning_id = #{record.winningId,jdbcType=INTEGER},
+      </if>
+      <if test="record.number != null" >
+        number = #{record.number,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prizeType != null" >
+        prize_type = #{record.prizeType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update winning
+    set winning_id = #{record.winningId,jdbcType=INTEGER},
+      number = #{record.number,jdbcType=VARCHAR},
+      prize_type = #{record.prizeType,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mstf.entity.Winning" >
+    update winning
+    <set >
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeType != null" >
+        prize_type = #{prizeType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where winning_id = #{winningId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mstf.entity.Winning" >
+    update winning
+    set number = #{number,jdbcType=VARCHAR},
+      prize_type = #{prizeType,jdbcType=VARCHAR}
+    where winning_id = #{winningId,jdbcType=INTEGER}
+  </update>
+</mapper>

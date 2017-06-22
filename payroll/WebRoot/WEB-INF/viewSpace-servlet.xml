@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/util
+    	http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+        
+	<!-- 自动注册SpringMVC所需的所有驱动 -->
+	<mvc:annotation-driven />
+	<!-- 自动扫描base-package指向的包中所有注解 -->
+	<context:component-scan base-package="com.mstf" />
+	
+	<!-- 自定义拦截器 -->  
+    <mvc:interceptors>  
+    	<bean class="com.mstf.action.LoginInterceptor" />
+    </mvc:interceptors>  
+	
+<!-- 配置静态资源，直接映射到对应的文件夹，不被DispatcherServlet处理 -->
+	<mvc:resources mapping="/**" location="/resources" />
+	 
+	 <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+         <property name="prefix" value="/WEB-INF/jsp/" />
+         <property name="suffix" value=".jsp" />
+    </bean>
+    
+	
+	<!-- 引入JSTL标签支持 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+	</bean>
+	<!-- 配置dbcp数据源，通过数据源管理数据库连接 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/payroll?useUnicode=true&amp;characterEncoding=utf-8"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="123456"></property>
+	</bean>
+	<!-- 管理MyBatis Session 工厂 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 加载MyBatis配置文件 -->
+		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- mapper bean -->
+	<!-- 引入DAO包接口，产生DAO实现类，并动态获得sqlSessionFactory对象 -->
+	<bean id="check_jobMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.Check_jobMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="deptMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.DeptMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="prizeMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.PrizeMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="salaryMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.SalaryMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="shopMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.ShopMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="subsidyMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.SubsidyMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.UserMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="winningMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mstf.dao.WinningMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+		<list>
+			<ref bean="mappingJacksonHttpMessageConverter" />
+		</list>
+		</property>
+	</bean>
+
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+	</bean>
+
+	<!-- 定义事务管理器（声明式的事务） -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 定义事务切面 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 注入前置增强 
+	<bean id="byBeforeAdvice" class="com.mstf.action.ByBeforeAdvice"></bean>
+	注入目标对象
+	<bean id="target" class="com.mstf.service.SubsityService"></bean>
+	修改代理对象配置中p:interceptorNames的织入
+	<bean id="prizeBean" 
+		class="org.springframework.aop.framework.ProxyFactoryBean"
+		p:proxyInterfaces="com.mstf.dao.SubsityMapper" 
+		p:target-ref="target"
+		p:interceptorNames="byBeforeAdvice"></bean> -->
+		
+	<!-- 通过AOP配置提供事务增强，让service包下所有类，方法命名开头为test的方法拥有事务 -->
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice"
+			pointcut="execution(* com.mstf.service.*.add*(..))" />
+	</aop:config>
+
+</beans>

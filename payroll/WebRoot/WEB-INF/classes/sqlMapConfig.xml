@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC
+ "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<mappers>
+		<mapper resource="com/mstf/dao/Check_jobMapper.xml" />
+		<mapper resource="com/mstf/dao/DeptMapper.xml" />
+		<mapper resource="com/mstf/dao/PrizeMapper.xml" />
+		<mapper resource="com/mstf/dao/SalaryMapper.xml" />
+		<mapper resource="com/mstf/dao/ShopMapper.xml" />
+		<mapper resource="com/mstf/dao/SubsidyMapper.xml" />
+		<mapper resource="com/mstf/dao/UserMapper.xml" />
+		<mapper resource="com/mstf/dao/WinningMapper.xml" />
+	</mappers>
+</configuration>
